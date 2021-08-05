@@ -1,7 +1,12 @@
 <template>
     <div class="post">
-        <div><strong>Название:</strong>{{ post.title }}</div>
-        <div><strong>Описание:</strong>{{ post.body }}</div>
+        <div>
+            <div><strong>Название:</strong>{{ post.title }}</div>
+            <div><strong>Описание:</strong>{{ post.body }}</div>
+        </div>
+        <div class="post__btn">
+            <my-button>Удалить</my-button>
+        </div>
     </div>
 </template>
 
@@ -17,5 +22,13 @@
 </script>
 
 <style scoped>
-
+    .post{
+        width:100%;
+        padding: 15px;
+        border: 2px solid teal;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 </style>
