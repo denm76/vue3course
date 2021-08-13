@@ -39,7 +39,7 @@ export default {
 
     data() {
         return {
-            posts: [{}],
+            posts: [],
             dialogVisible:false,
             selectedSort:'',
             sortOptions:[
