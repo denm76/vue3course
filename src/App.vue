@@ -1,10 +1,17 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
+        <div class="app__btns">
+            <my-button
+                    @click="showDialog">Создать пост</my-button>
+            <my-select
+                    v-model="selectedSort"
+                    :options="sortOptions"
+            ></my-select>
+        </div>
 <!--        <input type="text" v-model.trim="modificatorValue">&lt;!&ndash; trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу&ndash;&gt;-->
 <!--        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>-->
-        <my-button
-                @click="showDialog" style="margin:10px 10px">Создать пост</my-button>
+
         <my-dialog v-model:show = "dialogVisible">
             <post-form
                     @create = "createPost"
@@ -32,8 +39,13 @@ export default {
 
     data() {
         return {
-            isPostLoading: false,
-            posts: [''],
+            posts: [{}],
+            dialogVisible:false,
+            selectedSort:'',
+            sortOptions:[
+                {value:'title', name:'По названию'},
+                {value:'body', name:'По содержимому'}
+            ]
         }
     },
 
@@ -78,6 +90,12 @@ export default {
 
     .app{
         padding: 20px;
+    }
+
+    .app__btns{
+        display: flex;
+        justify-content: space-between;
+        margin:15px 0;
     }
 
 
