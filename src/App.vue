@@ -1,6 +1,7 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
+        <input type="text" v-model.trim="modificatorValue"><!-- trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу-->
         <my-button
                 @click="showDialog" style="margin:10px 10px">Создать пост</my-button>
         <my-dialog v-model:show = "dialogVisible">
@@ -34,6 +35,7 @@ export default {
                 {id: 3, title: 'Javascript 3', body: 'Описание поста 3'},
             ],
             dialogVisible: false,
+            modificatorValue: '',
         }
     },
 
