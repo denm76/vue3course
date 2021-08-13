@@ -20,7 +20,7 @@
 
 
         <post-list
-                :posts = "posts"
+                :posts = "sortedPost"
                 @remove = "removePost"
         />
 
@@ -75,13 +75,18 @@ export default {
     mounted(){
         this.fetchPosts();
     },
-    watch:{
-        selectedSort(newValue){
-            this.posts.sort((post1, post2) =>{
-                return post1[newValue]?.localeCompare(post2[newValue])
-            })
+    computed: {
+        sortedPost(){
+            return [...this.posts].sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]));
         }
-    }
+    },
+    // watch:{
+    //     selectedSort(newValue){
+    //         this.posts.sort((post1, post2) =>{
+    //             return post1[newValue]?.localeCompare(post2[newValue])
+    //         })
+    //     }
+    // }
 
 }
 
