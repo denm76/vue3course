@@ -2,7 +2,7 @@
     <div class="app">
         <h1>Страница с постами</h1>
 <!--        <input type="text" v-model.trim="modificatorValue">&lt;!&ndash; trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу&ndash;&gt;-->
-        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>
+<!--        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>-->
         <my-button
                 @click="showDialog" style="margin:10px 10px">Создать пост</my-button>
         <my-dialog v-model:show = "dialogVisible">
@@ -32,9 +32,8 @@ export default {
 
     data() {
         return {
-            posts: [],
-            dialogVisible: false,
-            modificatorValue: '',
+            isPostLoading: false,
+            posts: [''],
         }
     },
 
@@ -51,20 +50,22 @@ export default {
         },
         async fetchPosts(){
             try {
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
-                console.log(response);
-                this.posts = response.data;
+
+                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                    this.posts = response.data;
+
             }
             catch (e) {
                 alert('Ошибка!');
             }
-        }
-        // inputTitle(event){
-        //     this.title = event.target.value;
-        // }
+        },
+    },
+    mounted(){
+        this.fetchPosts();
     }
 
 }
+
 
 </script>
 
