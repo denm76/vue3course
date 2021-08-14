@@ -1,6 +1,7 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
+        <my-input v-model="searchQuery" placeholder="Поиск..."></my-input>
         <div class="app__btns">
             <my-button
                     @click="showDialog">Создать пост</my-button>
@@ -20,7 +21,7 @@
 
 
         <post-list
-                :posts = "sortedPost"
+                :posts = "sortedAndSearchedPosts"
                 @remove = "removePost"
         />
 
@@ -45,7 +46,8 @@ export default {
             sortOptions:[
                 {value:'title', name:'По названию'},
                 {value:'body', name:'По содержимому'}
-            ]
+            ],
+            searchQuery:'',
         }
     },
 
@@ -63,7 +65,7 @@ export default {
         async fetchPosts(){
             try {
 
-                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=5');
                     this.posts = response.data;
 
             }
@@ -78,6 +80,9 @@ export default {
     computed: {
         sortedPost(){
             return [...this.posts].sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]));
+        },
+        sortedAndSearchedPosts(){
+            return this.sortedPost.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
         }
     },
     // watch:{
