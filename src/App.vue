@@ -1,19 +1,19 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
-        <div class="page__wrapper">
-            <div
-                    v-for="pageNumber in totalPages"
-                    :key="pageNumber"
-                    class="page"
-                    :class="{
-                        'current_page': page === pageNumber
-                    }"
-                    @click="changePage(pageNumber)"
-            >
-                {{ pageNumber }}
-            </div>
-        </div>
+<!--        <div class="page__wrapper">-->
+<!--            <div-->
+<!--                    v-for="pageNumber in totalPages"-->
+<!--                    :key="pageNumber"-->
+<!--                    class="page"-->
+<!--                    :class="{-->
+<!--                        'current_page': page === pageNumber-->
+<!--                    }"-->
+<!--                    @click="changePage(pageNumber)"-->
+<!--            >-->
+<!--                {{ pageNumber }}-->
+<!--            </div>-->
+<!--        </div>-->
         <my-input v-model="searchQuery" placeholder="Поиск..."></my-input>
         <div class="app__btns">
             <my-button
@@ -37,6 +37,9 @@
                 :posts = "sortedAndSearchedPosts"
                 @remove = "removePost"
         />
+        <div ref="observer" class="observer">
+
+        </div>
 
     </div>
 </template>
@@ -96,12 +99,42 @@ export default {
                 alert('Ошибка!');
             }
         },
-        changePage(pageNumber){
-            this.page = pageNumber;
+        async loadMorePosts(){
+            try {
+                this.page += 1; //Переключение страницы на одну вперед при вызове данной функции.
+                const response = await axios.get('https://jsonplaceholder.typicode.com/posts',
+                    {
+                        params:{
+                            _page:this.page,
+                            _limit:this.limit,
+                        }
+                    });
+                this.totalPages = Math.ceil(response.headers['x-total-count']/this.limit);
+                this.posts = response.data;
+
+            }
+            catch (e) {
+                alert('Ошибка!');
+            }
         }
+        // changePage(pageNumber){
+        //     this.page = pageNumber;
+        // }
     },
     mounted(){
         this.fetchPosts();
+        // логика отслеживания достижения конца страницы(Intersection Observer API)
+        const options = {
+            rootMargin: '0px',
+            threshold: 1.0
+        }
+        const callback = (entries, observer) => {
+            if(entries[0].isIntersecting && this.page && this.totalPages){
+                this.loadMorePosts();
+            }
+        };
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(this.$refs.observer)
     },
     computed: {
         sortedPost(){
@@ -112,9 +145,9 @@ export default {
         }
     },
     watch: {
-        page(){
-            this.fetchPosts();
-        }
+        // page(){
+        //     this.fetchPosts();
+        // }
     }
     // watch:{
     //     selectedSort(newValue){
@@ -157,6 +190,10 @@ export default {
 
     .current_page{
         border: 2px solid green;
+        background: blanchedalmond;
     }
-
+    .observer{
+        width:100%;
+        height: 50px;
+    }
 </style>
