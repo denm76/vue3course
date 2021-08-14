@@ -1,6 +1,19 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
+        <div class="page__wrapper">
+            <div
+                    v-for="pageNumber in totalPages"
+                    :key="pageNumber"
+                    class="page"
+                    :class="{
+                        'current_page': page === pageNumber
+                    }"
+                    @click="changePage(pageNumber)"
+            >
+                {{ pageNumber }}
+            </div>
+        </div>
         <my-input v-model="searchQuery" placeholder="Поиск..."></my-input>
         <div class="app__btns">
             <my-button
@@ -48,6 +61,9 @@ export default {
                 {value:'body', name:'По содержимому'}
             ],
             searchQuery:'',
+            page: 1,
+            limit: 10,
+            totalPages: 0,
         }
     },
 
@@ -65,7 +81,14 @@ export default {
         async fetchPosts(){
             try {
 
-                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=5');
+                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts',
+                        {
+                            params:{
+                                _page:this.page,
+                                _limit:this.limit,
+                            }
+                        });
+                    this.totalPages = Math.ceil(response.headers['x-total-count']/this.limit);
                     this.posts = response.data;
 
             }
@@ -73,6 +96,9 @@ export default {
                 alert('Ошибка!');
             }
         },
+        changePage(pageNumber){
+            this.page = pageNumber;
+        }
     },
     mounted(){
         this.fetchPosts();
@@ -85,6 +111,11 @@ export default {
             return this.sortedPost.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
         }
     },
+    watch: {
+        page(){
+            this.fetchPosts();
+        }
+    }
     // watch:{
     //     selectedSort(newValue){
     //         this.posts.sort((post1, post2) =>{
@@ -114,6 +145,18 @@ export default {
         justify-content: space-between;
         margin:15px 0;
     }
+    .page__wrapper{
+        display: flex;
+        margin-top: 15px;
+    }
+    .page{
+        border: 1px solid black;
+        padding: 10px;
+        margin-right: 5px;
+    }
 
+    .current_page{
+        border: 2px solid green;
+    }
 
 </style>
