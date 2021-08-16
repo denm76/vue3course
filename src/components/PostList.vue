@@ -10,7 +10,6 @@
             />
         </transition-group>
     </div>
-    <h2 v-else style="color:red">Посты отсутствуют.</h2>
 </template>
 
 <script>
