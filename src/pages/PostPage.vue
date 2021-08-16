@@ -19,7 +19,6 @@
             />
         </my-dialog>
 
-
         <post-list
                 :posts = "sortedAndSearchedPosts"
                 @remove = "removePost"
@@ -37,6 +36,8 @@
                 {{ pageNumber }}
             </div>
         </div>
+
+
 <!--        <div ref="observer" class="observer">-->
 
 <!--        </div>-->
@@ -51,7 +52,7 @@
 
     export default {
         components:{
-            PostList, PostForm
+            PostList, PostForm,
         },
 
         data() {
