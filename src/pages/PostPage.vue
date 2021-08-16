@@ -1,7 +1,10 @@
 <template>
     <div>
         <h1>Страница с постами</h1>
-        <my-input v-model="searchQuery" placeholder="Поиск..."></my-input>
+        <my-input
+                v-model="searchQuery"
+                v-focus
+                placeholder="Поиск..."></my-input>
         <div class="app__btns">
             <my-button
                     @click="showDialog">Создать пост</my-button>
@@ -23,24 +26,24 @@
                 :posts = "sortedAndSearchedPosts"
                 @remove = "removePost"
         />
-        <div class="page__wrapper">
-            <div
-                    v-for="pageNumber in totalPages"
-                    :key="pageNumber"
-                    class="page"
-                    :class="{
-                                'current_page': page === pageNumber
-                            }"
-                    @click="changePage(pageNumber)"
-            >
-                {{ pageNumber }}
-            </div>
-        </div>
-
-
-<!--        <div ref="observer" class="observer">-->
-
+<!--        <div class="page__wrapper">-->
+<!--            <div-->
+<!--                    v-for="pageNumber in totalPages"-->
+<!--                    :key="pageNumber"-->
+<!--                    class="page"-->
+<!--                    :class="{-->
+<!--                                'current_page': page === pageNumber-->
+<!--                            }"-->
+<!--                    @click="changePage(pageNumber)"-->
+<!--            >-->
+<!--                {{ pageNumber }}-->
+<!--            </div>-->
 <!--        </div>-->
+
+
+        <div v-intersection="loadMorePosts" class="observer">
+
+        </div>
 
     </div>
 </template>
@@ -102,6 +105,7 @@
             },
             async loadMorePosts(){
                 try {
+                    document.body.scrollTop = document.documentElement.scrollTop = 0;
                     this.page += 1; //Переключение страницы на одну вперед при вызове данной функции.
                     const response = await axios.get('https://jsonplaceholder.typicode.com/posts',
                         {
@@ -112,31 +116,20 @@
                         });
                     this.totalPages = Math.ceil(response.headers['x-total-count']/this.limit);
                     this.posts = response.data;
-
                 }
                 catch (e) {
                     alert('Ошибка!');
                 }
             },
-            changePage(pageNumber){
-                this.page = pageNumber;
-                this.fetchPosts();
-            }
+            // changePage(pageNumber){
+            //     this.page = pageNumber;
+            //     this.fetchPosts();
+            // }
         },
         mounted(){
             this.fetchPosts();
-            // логика отслеживания достижения конца страницы(Intersection Observer API)
-            // const options = {
-            //     rootMargin: '0px',
-            //     threshold: 1.0
-            // }
-            // const callback = (entries, observer) => {
-            //     if(entries[0].isIntersecting && this.page && this.totalPages){
-            //         this.loadMorePosts();
-            //     }
-            // };
-            // const observer = new IntersectionObserver(callback, options);
-            // observer.observe(this.$refs.observer)
+            //логика отслеживания достижения конца страницы(Intersection Observer API)
+            console.log(this.$refs.observer);
         },
         computed: {
             sortedPost(){
@@ -160,7 +153,6 @@
         }
 
     }
-
 
 </script>
 
@@ -186,7 +178,6 @@
         background: blanchedalmond;
     }
     .observer{
-        width:100%;
-        height: 50px;
+        height: 30px;
     }
 </style>
