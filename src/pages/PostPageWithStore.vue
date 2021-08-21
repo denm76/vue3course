@@ -1,37 +1,32 @@
 <template>
     <div>
-        <h1>{{$store.state.isAuth ? "Пользователь авторизован" : "Авторизуйтесь для использовния сервиса"}}</h1>
-        <h1>{{ $store.getters.doubleLikes }}</h1>
-        <div>
-            <my-button @click="$store.commit('incrementLikes')">Лайк</my-button>
-            <my-button @click="$store.commit('decrementLikes')">ДизЛайк</my-button>
-        </div>
-        <h1>Страница с постами</h1>
-        <my-input
-                v-model="searchQuery"
-                v-focus
-                placeholder="Поиск..."></my-input>
-        <div class="app__btns">
-            <my-button
-                    @click="showDialog">Создать пост</my-button>
-            <my-select
-                    v-model="selectedSort"
-                    :options="sortOptions"
-            ></my-select>
-        </div>
-        <!--        <input type="text" v-model.trim="modificatorValue">&lt;!&ndash; trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу&ndash;&gt;-->
-        <!--        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>-->
+        <h1>{{$store.state.post.limit}}</h1>
+<!--        <h1>Страница с постами</h1>-->
+<!--        <my-input-->
+<!--                v-model="searchQuery"-->
+<!--                v-focus-->
+<!--                placeholder="Поиск..."></my-input>-->
+<!--        <div class="app__btns">-->
+<!--            <my-button-->
+<!--                    @click="showDialog">Создать пост</my-button>-->
+<!--            <my-select-->
+<!--                    v-model="selectedSort"-->
+<!--                    :options="sortOptions"-->
+<!--            ></my-select>-->
+<!--        </div>-->
+<!--        &lt;!&ndash;        <input type="text" v-model.trim="modificatorValue">&lt;!&ndash; trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу&ndash;&gt;&ndash;&gt;-->
+<!--        &lt;!&ndash;        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>&ndash;&gt;-->
 
-        <my-dialog v-model:show = "dialogVisible">
-            <post-form
-                    @create = "createPost"
-            />
-        </my-dialog>
+<!--        <my-dialog v-model:show = "dialogVisible">-->
+<!--            <post-form-->
+<!--                    @create = "createPost"-->
+<!--            />-->
+<!--        </my-dialog>-->
 
-        <post-list
-                :posts = "sortedAndSearchedPosts"
-                @remove = "removePost"
-        />
+<!--        <post-list-->
+<!--                :posts = "sortedAndSearchedPosts"-->
+<!--                @remove = "removePost"-->
+<!--        />-->
         <!--        <div class="page__wrapper">-->
         <!--            <div-->
         <!--                    v-for="pageNumber in totalPages"-->
@@ -91,59 +86,18 @@
             showDialog(){
                 this.dialogVisible = true;
             },
-            async fetchPosts(){
-                try {
-
-                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts',
-                        {
-                            params:{
-                                _page:this.page,
-                                _limit:this.limit,
-                            }
-                        });
-                    this.totalPages = Math.ceil(response.headers['x-total-count']/this.limit);
-                    this.posts = response.data;
-
-                }
-                catch (e) {
-                    alert('Ошибка!');
-                }
-            },
-            async loadMorePosts(){
-                try {
-                    document.body.scrollTop = document.documentElement.scrollTop = 0;
-                    this.page += 1; //Переключение страницы на одну вперед при вызове данной функции.
-                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts',
-                        {
-                            params:{
-                                _page:this.page,
-                                _limit:this.limit,
-                            }
-                        });
-                    this.totalPages = Math.ceil(response.headers['x-total-count']/this.limit);
-                    this.posts = response.data;
-                }
-                catch (e) {
-                    alert('Ошибка!');
-                }
-            },
             // changePage(pageNumber){
             //     this.page = pageNumber;
             //     this.fetchPosts();
             // }
         },
         mounted(){
-            this.fetchPosts();
+            //this.fetchPosts();
             //логика отслеживания достижения конца страницы(Intersection Observer API)
-            console.log(this.$refs.observer);
+            //console.log(this.$refs.observer);
         },
         computed: {
-            sortedPost(){
-                return [...this.posts].sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]));
-            },
-            sortedAndSearchedPosts(){
-                return this.sortedPost.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
-            }
+
         },
         // watch: {
         //     // page(){
