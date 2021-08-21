@@ -16,7 +16,7 @@ export const postModule = {
     }),
     getters: {
         sortedPost(state){
-            return [state.posts].sort((post1, post2) => post1[state.selectedSort]?.localeCompare(post2[state.selectedSort]));
+            return [...state.posts].sort((post1, post2) => post1[state.selectedSort]?.localeCompare(post2[state.selectedSort]));
         },
         sortedAndSearchedPosts(state, getters){
             return getters.sortedPost.filter(post => post.title.toLowerCase().includes(state.searchQuery.toLowerCase()))
@@ -67,8 +67,7 @@ export const postModule = {
         },
         async loadMorePosts({state, commit}){
             try {
-                document.body.scrollTop = document.documentElement.scrollTop = 0;
-                this.page += 1; //Переключение страницы на одну вперед при вызове данной функции.
+                 //Переключение страницы на одну вперед при вызове данной функции.
                 commit('setPage', state.page+1);
                 const response = await axios.get('https://jsonplaceholder.typicode.com/posts',
                     {
@@ -84,6 +83,6 @@ export const postModule = {
                 alert('Ошибка!');
             }
         },
-    }
-
+    },
+    namespaced:true
 }

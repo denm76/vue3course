@@ -1,32 +1,33 @@
 <template>
     <div>
-        <h1>{{$store.state.post.limit}}</h1>
-<!--        <h1>Страница с постами</h1>-->
-<!--        <my-input-->
-<!--                v-model="searchQuery"-->
-<!--                v-focus-->
-<!--                placeholder="Поиск..."></my-input>-->
-<!--        <div class="app__btns">-->
-<!--            <my-button-->
-<!--                    @click="showDialog">Создать пост</my-button>-->
-<!--            <my-select-->
-<!--                    v-model="selectedSort"-->
-<!--                    :options="sortOptions"-->
-<!--            ></my-select>-->
-<!--        </div>-->
-<!--        &lt;!&ndash;        <input type="text" v-model.trim="modificatorValue">&lt;!&ndash; trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу&ndash;&gt;&ndash;&gt;-->
-<!--        &lt;!&ndash;        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>&ndash;&gt;-->
+        <h1>Страница с постами</h1>
+        <my-input
+                :model-value="searchQuery"
+                @update:model-value="setSearchQuery"
+                v-focus
+                placeholder="Поиск..."></my-input>
+        <div class="app__btns">
+            <my-button
+                    @click="showDialog">Создать пост</my-button>
+            <my-select
+                    model-value="selectedSort"
+                    @update:model-value="setSelectedSort"
+                    :options="sortOptions"
+            ></my-select>
+        </div>
+        <!--        <input type="text" v-model.trim="modificatorValue">&lt;!&ndash; trim обрезает пробелы с начала и конца вводимой строки, number приводит к числу&ndash;&gt;-->
+        <!--        <my-button @click="fetchPosts" style="margin-right: 10px">Получить посты</my-button>-->
 
-<!--        <my-dialog v-model:show = "dialogVisible">-->
-<!--            <post-form-->
-<!--                    @create = "createPost"-->
-<!--            />-->
-<!--        </my-dialog>-->
+        <my-dialog v-model:show = "dialogVisible">
+            <post-form
+                    @create = "createPost"
+            />
+        </my-dialog>
 
-<!--        <post-list-->
-<!--                :posts = "sortedAndSearchedPosts"-->
-<!--                @remove = "removePost"-->
-<!--        />-->
+        <post-list
+                :posts = "sortedAndSearchedPosts"
+                @remove = "removePost"
+        />
         <!--        <div class="page__wrapper">-->
         <!--            <div-->
         <!--                    v-for="pageNumber in totalPages"-->
@@ -52,30 +53,35 @@
 <script>
     import PostForm from "@/components/PostForm";
     import PostList from "@/components/PostList";
-    import axios from "axios";
+    import MyButton from "../components/UI/MyButton";
+    import MyInput from "../components/UI/MyInput";
+    import MySelect from "../components/UI/MySelect";
+    import {mapState, mapActions, mapGetters, mapMutations} from 'vuex'
 
     export default {
         components:{
+            MyInput,
+            MySelect,
+            MyButton,
             PostList, PostForm,
         },
 
         data() {
             return {
-                posts: [],
                 dialogVisible:false,
-                selectedSort:'',
-                sortOptions:[
-                    {value:'title', name:'По названию'},
-                    {value:'body', name:'По содержимому'}
-                ],
-                searchQuery:'',
-                page: 1,
-                limit: 10,
-                totalPages: 0,
             }
         },
 
         methods: {
+            ...mapMutations({
+                setPage:'post/setPage',
+                setSearchQuery:'post/setSearchQuery',
+                setSelectedSort:'post/setSelectedSort',
+            }),
+            ...mapActions({
+                loadMorePosts:'post/loadMorePosts',
+                fetchPosts:'post/fetchPosts'
+            }),
             createPost(post) {
                 this.posts.push(post);
                 this.dialogVisible = false;
@@ -92,12 +98,25 @@
             // }
         },
         mounted(){
-            //this.fetchPosts();
+            this.fetchPosts();
             //логика отслеживания достижения конца страницы(Intersection Observer API)
             //console.log(this.$refs.observer);
         },
         computed: {
-
+            ...mapState({
+                posts: state => state.post.posts,
+                isPostsLoading: state => state.post.isPostsLoading,
+                selectedSort:state => state.post.selectedSort,
+                sortOptions:state => state.post.sortOptions,
+                searchQuery:state => state.post.searchQuery,
+                page:state => state.post.page,
+                limit:state => state.post.limit,
+                totalPages:state => state.post.totalPages,
+            }),
+            ...mapGetters({
+                sortedPost:'post/sortedPost',
+                sortedAndSearchedPosts:'post/sortedAndSearchedPosts'
+            })
         },
         // watch: {
         //     // page(){
